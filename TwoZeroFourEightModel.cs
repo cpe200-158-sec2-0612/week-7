@@ -11,7 +11,7 @@ namespace twozerofoureight
         protected int boardSize; // default is 4
         protected int[,] board;
         protected Random rand;
-        protected int score = 2;
+        protected int score = 0;
 
         public TwoZeroFourEightModel() : this(4)
         {
@@ -29,22 +29,22 @@ namespace twozerofoureight
             return board;
         }
 
-        public TwoZeroFourEightModel(int size)
+        public TwoZeroFourEightModel(int size) 
         {
-            boardSize = size;
-            board = new int[boardSize, boardSize];
+            boardSize = size;  //กำหนดขนาดบอร์ด
+            board = new int[boardSize, boardSize]; 
             var range = Enumerable.Range(0, boardSize);
             foreach(int i in range) {
                 foreach(int j in range) {
                     board[i,j] = 0;
                 }
             }
-            rand = new Random();
+            rand = new Random(); 
             board = Random(board);
             NotifyAll();
         }
 
-        private int[,] Random(int[,] input)
+        private int[,] Random(int[,] input) //สุ่มตำแหน่งให้เลขค่าใหม่ขึ้นมาโดยจะเชคว่าตำแหน่งนั้นเป็นศูนย์รึป่าว ถ้าเป็นก็จะสุ่มสองขึ้นมา
         {
             while (true)
             {
@@ -53,6 +53,11 @@ namespace twozerofoureight
                 if (board[x, y] == 0)
                 {
                     board[x, y] = 2;
+                    score += 2;
+                    break;
+                }
+                if (CBoard())
+                {
                     break;
                 }
             }
@@ -61,7 +66,7 @@ namespace twozerofoureight
 
         public void PerformDown()
         {
-            score += 2;
+            
             int[] buffer;
             int pos;
             int[] rangeX = Enumerable.Range(0, boardSize).ToArray();
@@ -115,7 +120,7 @@ namespace twozerofoureight
 
         public void PerformUp()
         {
-            score += 2;
+            
             int[] buffer;
             int pos;
 
@@ -168,7 +173,7 @@ namespace twozerofoureight
 
         public void PerformRight()
         {
-            score += 2;
+            
             int[] buffer;
             int pos;
 
@@ -223,7 +228,7 @@ namespace twozerofoureight
 
         public void PerformLeft()
         {
-            score += 2;
+            
             int[] buffer;
             int pos;
             int[] range = Enumerable.Range(0, boardSize).ToArray();
@@ -271,5 +276,84 @@ namespace twozerofoureight
             board = Random(board);
             NotifyAll();
         }
+
+        // check board ว่าเต็มรึป่าว
+        public bool CBoard()
+        {
+            bool Full = true;
+            for(int i = 0; i < boardSize; i++)
+            {
+                for(int j=0; j<boardSize; j++)
+                {
+                    if (board[i, j] == 0)
+                    {
+                        Full = false;
+                        break;
+                    }
+                    else {
+                        Full = true;
+                    }
+                }
+                if (!Full)
+                {
+                    break;
+                }
+            }
+            return Full;
+        }
+
+        //check ending
+        public bool GameEnd()
+        {
+            bool Ending = false;
+            if (CBoard() == true)
+            {
+                for(int j=0; j< boardSize; j++)
+                {
+                    for(int i=0; i< boardSize - 1; i++)
+                    {
+                        if (board[i,j] != board[i + 1, j])
+                        {
+                            Ending = true;
+                        }
+                        else if (board[i,j] == board[i + 1, j])
+                        {
+                            Ending = false;
+                            break;
+                        }
+                    }
+                    if (!Ending)
+                    {
+                        break;
+                    }
+                }
+                for(int i=0; i< boardSize; i++)
+                {
+                    if (!Ending)
+                    {
+                        break;
+                    }
+                    for(int j = 0; j < boardSize - 1; j++)
+                    {
+                        if(board[i,j] != board[i, j + 1])
+                        {
+                            Ending = true;
+                        }
+                        else if(board[i,j]== board[i, j + 1])
+                        {
+                            Ending = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Ending = false;
+            }
+
+            return Ending;
+        }
+
     }
 }

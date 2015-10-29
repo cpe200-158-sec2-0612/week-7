@@ -14,15 +14,19 @@ namespace twozerofoureight
     {
         Model model;
         Controller controller;
+        TwoZeroFourEightScoreView scoreview; //สร้างสกอร์วิว
        
         public TwoZeroFourEightView()
         {
             InitializeComponent();
-            model = new TwoZeroFourEightModel();
+            model = new TwoZeroFourEightModel();  
             model.AttachObserver(this);
             controller = new TwoZeroFourEightController();
             controller.AddModel(model);
             controller.ActionPerformed(TwoZeroFourEightController.LEFT);
+            scoreview = new TwoZeroFourEightScoreView(); //การสร้างสกอร์ ชี้ไปที่คลาส 2048
+            scoreview.Visible = true;
+            scoreview.Enabled = true;
         }
 
         private void UpdateScore(int score)
@@ -40,6 +44,13 @@ namespace twozerofoureight
         {
             UpdateBoard(((TwoZeroFourEightModel) m).GetBoard());
             UpdateScore(((TwoZeroFourEightModel) m).getScore());
+            //scoreview.UpdateScoreView(((TwoZeroFourEightModel)m).getScore());
+            if (((TwoZeroFourEightModel)m).GameEnd())
+            {
+                this.Visible = false;
+                scoreview.UpdateScoreView(((TwoZeroFourEightModel)m).getScore());
+                scoreview.Visible = true;
+            }
         }
 
         
